@@ -1,7 +1,7 @@
-#include "MDBounds.h"
+#include "CDBounds.h"
 
 
-MDBounds::MDBounds(MDVector2D *blp, MDVector2D* tlp, MDVector2D *trp, MDVector2D *brp)
+CDBounds::CDBounds(CDVector2D *blp, CDVector2D* tlp, CDVector2D *trp, CDVector2D *brp)
 {
 	BottomLeftPoint = blp;
 	TopLeftPoint = tlp; 
@@ -9,12 +9,12 @@ MDBounds::MDBounds(MDVector2D *blp, MDVector2D* tlp, MDVector2D *trp, MDVector2D
 	BottomRightPoint = brp;
 }
 
-MDBounds::MDBounds()
+CDBounds::CDBounds()
 {
 
 }
 
-MDBounds::~MDBounds(void)
+CDBounds::~CDBounds(void)
 {
 	delete BottomLeftPoint;
 	BottomLeftPoint = 0;

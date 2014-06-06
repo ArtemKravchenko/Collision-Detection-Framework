@@ -1,14 +1,14 @@
-#include "MDParticle2D.h"
+#include "CDParticle2D.h"
 
 
-MDParticle2D::MDParticle2D(MDVector2D	*position, MDVector2D	*velocity)
+CDParticle2D::CDParticle2D(CDVector2D	*position, CDVector2D	*velocity)
 {
 	this->Position = position;
 	this->Velocity = velocity;
 }
 
 
-MDParticle2D::~MDParticle2D(void)
+CDParticle2D::~CDParticle2D(void)
 {
 	delete Position;
 	Position = 0;

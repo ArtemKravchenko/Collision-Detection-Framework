@@ -1,15 +1,15 @@
 
-#include "MDParticlesPhysicLogic.h"
+#include "CDParticlesPhysicLogic.h"
 
 //--------------------------------------------------------------------
 // Constructor and destructors
 //--------------------------------------------------------------------
-MDParticlesPhysicLogic::MDParticlesPhysicLogic(MDParticlesList *particles)
+CDParticlesPhysicLogic::CDParticlesPhysicLogic(CDParticlesList *particles)
 {
 	_particles = particles;
 }
 
-MDParticlesPhysicLogic::~MDParticlesPhysicLogic(void)
+CDParticlesPhysicLogic::~CDParticlesPhysicLogic(void)
 {
 	_particles->clear();
 	delete _particles;
@@ -18,7 +18,7 @@ MDParticlesPhysicLogic::~MDParticlesPhysicLogic(void)
 //--------------------------------------------------------------------
 // Public functions
 //--------------------------------------------------------------------
-void MDParticlesPhysicLogic::MoveParticlesInSpace2DInTime(int time)
+void CDParticlesPhysicLogic::MoveParticlesInSpace2DInTime(int time)
 {
 	// TODO: need to implement
 }

@@ -1,11 +1,11 @@
 
-#include "MDParticlesSpace2D.h"
-#include "MDUtils.h"
+#include "CDParticlesSpace2D.h"
+#include "CDUtils.h"
 
 //--------------------------------------------------------------------
 // Constructor and destructors
 //--------------------------------------------------------------------
-MDParticlesSpace2D::MDParticlesSpace2D(MDParticlesList *particles, int width, int height)
+CDParticlesSpace2D::CDParticlesSpace2D(CDParticlesList *particles, int width, int height)
 {
 	_particles = particles;
 
@@ -13,21 +13,21 @@ MDParticlesSpace2D::MDParticlesSpace2D(MDParticlesList *particles, int width, in
 	int *ptrCountOfRows = &countOfRows;
 	int countOfColumns;
 	int *ptrCountOfColumns = &countOfColumns;
-	MDUtils::GetCountOfRowsAndColumnsForParticlesCount(ptrCountOfRows, ptrCountOfColumns, static_cast<int>(particles->size()));
-	_collisionDetectionLogic = new MDParticlesCollisionDetection2DLogic(particles, width, height, countOfRows, countOfColumns);
-	_physicLogic = new MDParticlesPhysicLogic(particles);
+	CDUtils::GetCountOfRowsAndColumnsForParticlesCount(ptrCountOfRows, ptrCountOfColumns, static_cast<int>(particles->size()));
+	_collisionDetectionLogic = new CDParticlesCollisionDetection2DLogic(particles, width, height, countOfRows, countOfColumns);
+	_physicLogic = new CDParticlesPhysicLogic(particles);
 	_width = width;
 	_height = height;
 }
 
 
-MDParticlesSpace2D::~MDParticlesSpace2D(void)
+CDParticlesSpace2D::~CDParticlesSpace2D(void)
 {
 }
 //--------------------------------------------------------------------
 // Public functions
 //--------------------------------------------------------------------
- void MDParticlesSpace2D::MoveParticlesInSpaceInTime(int time)
+ void CDParticlesSpace2D::MoveParticlesInSpaceInTime(int time)
 {
 	_collisionDetectionLogic->DecectCollisionBetweenParticlesInTime(time);
 	_physicLogic->MoveParticlesInSpace2DInTime(time);
