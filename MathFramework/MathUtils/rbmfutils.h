@@ -6,7 +6,6 @@ class RBMFUtils
 {
 public:
     RBMFUtils();
-    static RBMFMatrix* addTwoMatrix(RBMFMatrix* matrix1, RBMFMatrix* matrix2);
 };
 
 #endif // RBMFUTILS_H

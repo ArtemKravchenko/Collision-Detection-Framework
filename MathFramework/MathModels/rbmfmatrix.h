@@ -1,6 +1,6 @@
 #ifndef RBMFMATRIX_H
 #define RBMFMATRIX_H
-#include "rbmfvector.h";
+#include "rbmfvector.h"
 
 class RBMFMatrix : public RBMFVector
 {
@@ -15,9 +15,8 @@ public:
     RBMFMatrix* getTransponent() const;
 
 private:
-    int _countOfRow;
-    int _countOfCol;
-    int _arraySize;
+    int _countOfRows;
+    int _countOfCols;
     double *_array;
 };
 

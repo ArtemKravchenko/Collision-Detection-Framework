@@ -10,14 +10,14 @@ RBMFVector::RBMFVector(int dimention, const double* elements)
     _dimention = dimention;
     _elements = new double[_dimention];
     for(int i = 0; i < _dimention; i++)
-        _elements[i] = elements;
+        _elements[i] = elements[i];
 }
 RBMFVector::~RBMFVector()
 {
     delete[] _elements;
 }
 // Public functions
-double RBMFVector::getElements() const
+double* RBMFVector::getElements() const
 {
     return _elements;
 }

@@ -7,9 +7,9 @@ public:
     RBMFVector();
     RBMFVector(int dimention, const double* elements);
     ~RBMFVector();
-    double getElements() const;
+    double *getElements() const;
     int getDimention() const;
-private:
+protected:
     int _dimention;
     double* _elements;
 };
