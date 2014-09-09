@@ -1,6 +1,5 @@
 
 #include "CDParticlesSpace2D.h"
-#include "CDUtils.h"
 
 //--------------------------------------------------------------------
 // Constructor and destructors
@@ -13,7 +12,7 @@ CDParticlesSpace2D::CDParticlesSpace2D(CDParticlesList *particles, int width, in
 	int *ptrCountOfRows = &countOfRows;
 	int countOfColumns;
 	int *ptrCountOfColumns = &countOfColumns;
-	CDUtils::GetCountOfRowsAndColumnsForParticlesCount(ptrCountOfRows, ptrCountOfColumns, static_cast<int>(particles->size()));
+	// TODO: Unexpected remove //CDUtils::GetCountOfRowsAndColumnsForParticlesCount(ptrCountOfRows, ptrCountOfColumns, static_cast<int>(particles->size()));
 	_collisionDetectionLogic = new CDParticlesCollisionDetection2DLogic(particles, width, height, countOfRows, countOfColumns);
 	_physicLogic = new CDParticlesPhysicLogic(particles);
 	_width = width;

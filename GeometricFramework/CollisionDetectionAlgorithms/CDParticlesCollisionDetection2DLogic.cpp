@@ -1,5 +1,4 @@
 #include "CDParticlesCollisionDetection2DLogic.h"
-#include "CDUtils.h"
 #include <cmath>
 
 //--------------------------------------------------------------------
@@ -57,7 +56,7 @@ void CDParticlesCollisionDetection2DLogic::InitSubsystems(CDParticlesList *parti
 	for(int i = 0; i < countOfParticles; i++)
 	{
 		CDParticle2D *particle = particles->at(i);
-		multiindexOfSystem = CDUtils::GetMultiIndexOfSubsystem(static_cast<int>(particle->Position->X), static_cast<int>(particle->Position->Y), _subsystemWidth, _subsystemHeight, _countOfColumns);
+        multiindexOfSystem = 0; // TODO: Unexpected remove CDUtils::GetMultiIndexOfSubsystem(static_cast<int>(particle->Position->X), static_cast<int>(particle->Position->Y), _subsystemWidth, _subsystemHeight, _countOfColumns);
 		CDParticlesSystem *particleSystem = this->_subsystems->at(multiindexOfSystem);
 		if(particleSystem == NULL)
 		{

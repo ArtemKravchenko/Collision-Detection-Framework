@@ -22,15 +22,15 @@ RBMFMatrix::~RBMFMatrix()
     delete []_array;
 }
 // Operators
-RBMFMatrix RBMFMatrix::operator+(RBMFMatrix rhs)
+RBMFMatrix& RBMFMatrix::operator+(RBMFMatrix& rhs)
 {
     RBMFMatrix lhs = *this;
     if (lhs.getCountOfRows() != rhs.getCountOfRows() || lhs.getCountOfCols() != rhs.getCountOfCols())
         return *(new RBMFMatrix());
     int size = lhs.getCountOfElements();
     double *elements = new double[size];
-    double *lhsElements = lhs.getElements();
-    double *rhsElements = rhs.getElements();
+    const double *lhsElements = lhs.getElements();
+    const double *rhsElements = rhs.getElements();
     for (int i = 0; i < size; i++)
     {
         elements[i] = lhsElements[i] + rhsElements[i];
@@ -38,7 +38,7 @@ RBMFMatrix RBMFMatrix::operator+(RBMFMatrix rhs)
     RBMFMatrix *retMatrix = new RBMFMatrix(lhs.getCountOfRows(), lhs.getCountOfCols(), elements);
     return *retMatrix;
 }
-RBMFMatrix RBMFMatrix::operator*(RBMFMatrix rhs)
+RBMFMatrix& RBMFMatrix::operator*(RBMFMatrix& rhs)
 {
     RBMFMatrix lhs = *this;
     if (lhs.getCountOfCols() != rhs.getCountOfRows())
@@ -46,8 +46,8 @@ RBMFMatrix RBMFMatrix::operator*(RBMFMatrix rhs)
     int innerCount = lhs.getCountOfCols();
     int countOfCols = rhs.getCountOfCols();
     int countOfRows = lhs.getCountOfRows();
-    double *lhsElements = lhs.getElements();
-    double *rhsElements = rhs.getElements();
+    const double *lhsElements = lhs.getElements();
+    const double *rhsElements = rhs.getElements();
     int elementsSize = countOfCols * countOfRows;
     double *elements = new double[elementsSize];
     double partialSum;
@@ -79,7 +79,7 @@ int RBMFMatrix::getCountOfElements()
 {
     return _dimention;
 }
-double* RBMFMatrix::getElements() const
+const double* RBMFMatrix::getElements() const
 {
     return _elements;
 }

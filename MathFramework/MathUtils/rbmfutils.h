@@ -1,6 +1,6 @@
 #ifndef RBMFUTILS_H
 #define RBMFUTILS_H
-#include "E:/Study/Collision-Detection-Framework/MathFramework/MathModels/rbmfmatrix.h"
+#include "rbmfmatrix.h"
 #include <array>
 
 class RBMFUtils
@@ -19,8 +19,8 @@ public:
         return utils;
     }
     RBMFUtils() {}
-    RBMFUtils(RBMFUtils const&);              // Don't Implement.
-    void operator=(RBMFUtils const&);         // Don't Implement.
+    RBMFUtils(RBMFUtils const&) {}              // Don't Implement.
+    void operator=(RBMFUtils const&);           // Don't Implement.
 };
 
 #endif // RBMFUTILS_H

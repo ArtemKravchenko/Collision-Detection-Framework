@@ -1,8 +1,7 @@
 #include "rbmfutils.h"
 #include <iostream>
 #include <algorithm>
-#include <cstdlib>
-#include <stdio.h>
+#include "float.h"
 using namespace std;
 
 // Public functions
@@ -18,7 +17,7 @@ double RBMFUtils::determinantOfThreeDimention(std::array<double, 9> elements)
 
 double RBMFUtils::determinant(double *elements, int size, int square)
 {
-    if(square * square != size) return -DBL_MAX;
+    if(square * square != size) return DBL_MIN;
     int* indexes = new int[square];
     for(int i = 0; i < square; i++) indexes[i] = i;
     double sum = 0;

@@ -7,18 +7,19 @@ class RBGFVector
 public:
     RBGFVector();
     ~RBGFVector();
-    RBGFVector(RBGFPoint *end); // bound vector
-    RBGFVector(RBGFPoint *start, RBGFPoint *end); // free vector
-    RBGFPoint* getStart() const;
-    RBGFPoint* getEnd() const;
+    RBGFVector(RBGFPoint const *end); // bound vector
+    RBGFVector(RBGFPoint const *start, RBGFPoint const *end); // free vector
+    RBGFPoint& getStart();
+    RBGFPoint& getEnd();
     double getLength();
+    double dotProduct(RBGFVector *rhs);
     double dotProduct(RBGFPoint *rhs);
-    RBGFVector& operator+(const RBGFVector& rhs);
-    RBGFVector& operator-(const RBGFVector& rhs);
-    RBGFVector& operator*(const RBGFVector& rhs);
+    RBGFVector& addVector(const RBGFVector& rhs);
+    RBGFVector& subVector(const RBGFVector& rhs);
+    RBGFVector& crossProduct(const RBGFVector& rhs);
 private:
-    RBGFPoint* _startPoint;
-    RBGFPoint* _endPoint;
+    RBGFPoint *_startPoint;
+    RBGFPoint *_endPoint;
 };
 
 #endif // RBGFVECTOR_H

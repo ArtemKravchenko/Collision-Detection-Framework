@@ -4,7 +4,6 @@
 class RBGFPolygon
 {
 public:
-    RBGFPolygon();
 };
 
 #endif // RBGFPOLYGON_H

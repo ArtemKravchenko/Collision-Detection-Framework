@@ -5,10 +5,11 @@ class RBMFVector
 {
 public:
     RBMFVector();
-    RBMFVector(int dimention, const double* elements);
+    RBMFVector(int dimention, const double elements[]);
     ~RBMFVector();
-    double *getElements() const;
-    int getDimention() const;
+    const double *getElements() const;
+    int getDimention();
+    double dotProduct(RBMFVector *rhs);
 protected:
     int _dimention;
     double* _elements;
