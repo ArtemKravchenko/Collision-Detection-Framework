@@ -19,7 +19,7 @@ RBMFMatrix::RBMFMatrix(int countOfRow, int countOfCol, const double array[])
 }
 RBMFMatrix::~RBMFMatrix()
 {
-    delete []_array;
+    delete []_elements;
 }
 // Operators
 RBMFMatrix& RBMFMatrix::operator+(RBMFMatrix& rhs)
@@ -111,4 +111,8 @@ RBMFMatrix* RBMFMatrix::productByNumber(double number)
     for (int i = 0; i < _dimention; i++) { elements[i] = _elements[i] * number; }
     RBMFMatrix *retMatrix = new RBMFMatrix(_countOfRows, _countOfCols, elements);
     return retMatrix;
+}
+void RBMFMatrix::setElementAtInxex(double element, int index)
+{
+    _elements[index] = element;
 }

@@ -12,6 +12,7 @@ public:
     int getCountOfCols();
     int getCountOfElements();
     const double* getElements() const;
+    void setElementAtInxex(double element, int index);
     RBMFMatrix* getTransponent();
     RBMFMatrix* productByNumber(double number);
     RBMFMatrix& operator+(RBMFMatrix& rhs);

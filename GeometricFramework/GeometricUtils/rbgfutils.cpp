@@ -319,4 +319,68 @@ inline float RBGFUtils::triArea2D(float x1, float y1, float x2, float y2, float 
 {
     return (x1-x2)*(y2-y3)-(x2-x3)*(y1-y2);
 }
+double RBGFUtils::variance(double x[], int n)
+{
+    double u=0.0f;
+    for (int i = 0; i < n; i++) u += x[i];
+    u /= n;
+    double s2 = 0.0f;
+    for (int i = 0; i < n; i++) s2 += (x[i] - u) * (x[i] - u);
+    return s2 / n;
+}
+void CovarianceMatrix(RBMFMatrix &cov, RBGFPoint * const pt[], int numPts)
+{
+    double oon = 1.0f / (double)numPts;
+    RBGFPoint *c = new RBGFPoint(0, 0, 0);
+    double e00, e11, e22, e01, e02, e12;
+    // Compute the center of mass (centroid) of the points
+    for (int i = 0; i < numPts; i++)
+        c = c + pt[i];
+    c = c->productByNumber(oon);
+    // Compute covariance elements
+    e00 = e11 = e22 = e01 = e02 = e12 = 0;
+    for (int i = 0; i < numPts; i++)
+    {
+        // Translate points so center of mass is at origin
+        RBGFPoint p = *(pt[i]) - *c;
+        // Compute covariance of translated points
+        const double *els = p.getCoordinates();
+        e00 += els[0] * els[0];
+        e11 += els[1] * els[1];
+        e22 += els[2] * els[2];
+        e01 += els[0] * els[1];
+        e02 += els[0] * els[2];
+        e12 += els[1] * els[2];
+    }
+    // Fill in the covariance matrix elements
+    cov.setElementAtInxex(e00 * oon, 0);
+    cov.setElementAtInxex(e11 * oon, 4);
+    cov.setElementAtInxex(e22 * oon, 8);
+    cov.setElementAtInxex(e01 * oon, 1);
+    cov.setElementAtInxex(e01 * oon, 3);
+    cov.setElementAtInxex(e02 * oon, 2);
+    cov.setElementAtInxex(e02 * oon, 6);
+    cov.setElementAtInxex(e12 * oon, 5);
+    cov.setElementAtInxex(e12 * oon, 7);
+}
+void SymSchur2(RBMFMatrix &a, int p, int q, double &c, double &s)
+{
+    const double *els = a.getElements();
+    double num = els[p*3 + q];
+    if (abs(num) > 0.0001)
+    {
+        double n1 = els[q*3 + q];
+        double n2 = els[p*3 + p];
+        double n3 = els[p*3 + q];
+        double r=(n1 - n2)/(2.0 * n3);
+        double t;
+        if (r >= 0.0) t = 1.0 / (r + sqrt(1.0 + r*r));
+        else t = -1.0 / (-r + sqrt(1.0 + r*r));
+        c = 1.0 / sqrt(1.0 + t*t); s = t * c;
+    }
+    else
+    {
+        c = 1.0; s = 0.0;
+    }
+}
 

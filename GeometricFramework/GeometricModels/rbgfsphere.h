@@ -9,8 +9,9 @@
 #ifndef RBGFSPHERE_H
 #define RBGFSPHERE_H
 #include "rbgfpoint.h"
+#include "rbgfaxisalignedboundingbox.h"
 
-class RBGFSphere
+class RBGFSphere : public RBGFAxisAlignedBoundingBox
 {
 public:
     RBGFSphere(RBGFPoint * const center, double radius);

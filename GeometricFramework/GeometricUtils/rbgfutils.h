@@ -3,6 +3,7 @@
 #include "rbgfpoint.h"
 #include "rbgfaxisalignedboundingbox.h"
 #include "rbgfsphere.h"
+#include "rbmfmatrix.h"
 
 enum RBGFOrientated2DType {
     RBGFOrientated2DCounterClockwise,   // Lies to the left of the directed line
@@ -37,6 +38,15 @@ class RBGFUtils
 {
 private:
     inline float triArea2D(float x1, float y1, float x2, float y2, float x3, float y3);
+    // Compute variance of a set of 1D values
+    double variance(double x[], int n);
+    void CovarianceMatrix(RBMFMatrix &cov, RBGFPoint * const pt[], int numPts);
+    // 2-by-2 Symmetric Schur decomposition. Given an n-by-n symmetric matrix
+    // and indices p, q such that 1 <= p < q <= n, computes a sine-cosine pair
+    // (s, c) that will serve to form a Jacobi rotation matrix.
+    //
+    // See Golub, Van Loan, Matrix Computations, 3rd ed, p428
+    void SymSchur2(RBMFMatrix &a, int p, int q, double &c, double &s) ;
 public:
     // Determinant Predicates
     RBGFOrientated2DType orientated2D(RBGFPoint *p1, RBGFPoint *p2, RBGFPoint *p3);
