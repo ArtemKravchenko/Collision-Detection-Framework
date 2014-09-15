@@ -2,6 +2,7 @@
 #define RBGFUTILS_H
 #include "rbgfpoint.h"
 #include "rbgfaxisalignedboundingbox.h"
+#include "rbgforientatedboundingbox.h"
 #include "rbgfsphere.h"
 #include "rbmfmatrix.h"
 
@@ -39,14 +40,17 @@ class RBGFUtils
 private:
     inline float triArea2D(float x1, float y1, float x2, float y2, float x3, float y3);
     // Compute variance of a set of 1D values
+    /* ------- Bounding Sphere from Direction of Maximum Spread ------- */
     double variance(double x[], int n);
-    void CovarianceMatrix(RBMFMatrix &cov, RBGFPoint * const pt[], int numPts);
+    void covarianceMatrix(RBMFMatrix &cov, RBGFPoint * const pt[], int numPts);
     // 2-by-2 Symmetric Schur decomposition. Given an n-by-n symmetric matrix
     // and indices p, q such that 1 <= p < q <= n, computes a sine-cosine pair
     // (s, c) that will serve to form a Jacobi rotation matrix.
     //
     // See Golub, Van Loan, Matrix Computations, 3rd ed, p428
-    void SymSchur2(RBMFMatrix &a, int p, int q, double &c, double &s) ;
+    void symSchur2(RBMFMatrix &a, int p, int q, double &c, double &s);
+    void eigenSphere(RBGFSphere &eigSphere, RBGFPoint * const pt[], int numPts);
+    /* ---------------------------------------------------------------- */
 public:
     // Determinant Predicates
     RBGFOrientated2DType orientated2D(RBGFPoint *p1, RBGFPoint *p2, RBGFPoint *p3);
@@ -60,14 +64,23 @@ public:
     int testAABBAABB(RBGFAxisAlignedBoundingBox * const a, RBGFAxisAlignedBoundingBox * const b);
     void extremePointsAlongDirection(RBGFVector * const dir, RBGFPoint* const pt[], int n, int *imin, int *imax); // Returns indices imin and imax into pt[] array of the least and most, respectively, distant points along the direction dir
     // TEST SPHERE
-    int TestSphereSphere(RBGFSphere * const a, RBGFSphere * const b);
+    int testSphereSphere(RBGFSphere * const a, RBGFSphere * const b);
     // Compute indices to the two most separated points of the (up to) six points // defining the AABB encompassing the point set. Return these as min and max.
-    void MostSeparatedPointsOnAABB(int &min, int &max, RBGFPoint * const pt[], int numPts);
-    void SphereFromDistantPoints(RBGFSphere &s, RBGFPoint * const pt[], int numPts);
+    void mostSeparatedPointsOnAABB(int &min, int &max, RBGFPoint * const pt[], int numPts);
+    void sphereFromDistantPoints(RBGFSphere &s, RBGFPoint * const pt[], int numPts);
     // Given Sphere s and Point p, update s (if needed) to just encompass p
-    void SphereOfSphereAndPt(RBGFSphere &s, RBGFPoint const *p);
+    void sphereOfSphereAndPt(RBGFSphere &s, RBGFPoint const *p);
     // The full code for computing the approximate bounding sphere becomes
-    void RitterSphere(RBGFSphere &s, RBGFPoint * const pt[], int numPts);
+    void ritterSphere(RBGFSphere &s, RBGFPoint * const pt[], int numPts);
+    // Computing aproximate bounding sphere by statistical method
+    void ritterEigenSphere(RBGFSphere &s, RBGFPoint * const pt[], int numPts);
+    /* ------- Bounding Sphere Through Iterative Reﬁnement ------------ */
+    void ritterIterative(RBGFSphere &s, RBGFPoint const * pt[], int numPts);
+    /* ---------------------------------------------------------------- */
+    /* ---------------- The Minimum Bounding Sphere ------------------- */
+    RBGFSphere welzlSphere(RBGFPoint const * pt[], unsigned int numPts, RBGFPoint const * sos[], unsigned int numSos);
+    /* ---------------------------------------------------------------- */
+    int testOBBOBB(RBGFOrientatedBoundingBox &a, RBGFOrientatedBoundingBox &b);
     // Singleton
     static RBGFUtils& sharedUtils()
     {
