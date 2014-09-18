@@ -334,8 +334,11 @@ void CovarianceMatrix(RBMFMatrix &cov, RBGFPoint * const pt[], int numPts)
     RBGFPoint *c = new RBGFPoint(0, 0, 0);
     double e00, e11, e22, e01, e02, e12;
     // Compute the center of mass (centroid) of the points
-    for (int i = 0; i < numPts; i++)
-        c = c + pt[i];
+    for (int i = 0; i < numPts; i++) {
+        RBGFPoint &crtPnt = *pt[i];
+        RBGFPoint &oldPnt = *c;
+        c = &(oldPnt + crtPnt);
+    }
     c = c->productByNumber(oon);
     // Compute covariance elements
     e00 = e11 = e22 = e01 = e02 = e12 = 0;
@@ -382,5 +385,41 @@ void SymSchur2(RBMFMatrix &a, int p, int q, double &c, double &s)
     {
         c = 1.0; s = 0.0;
     }
+}
+void Jacobi(RBMFMatrix &a, RBMFMatrix &v)
+{
+    int i, j, n, p, q;
+    float prevoff, c, s;
+    RBMFMatrix J, b, t;
+    // Initialize v to identify matrix
+    for (i = 0; i < 3; i++) {
+        v[i][0] = v[i][1] = v[i][2] = 0.0f;
+        v[i][i] = 1.0f;
+    }
+    // Repeat for some maximum number of iterations
+    const int MAX_ITERATIONS = 50;
+    for (n = 0; n < MAX_ITERATIONS; n++) {
+        // Find largest off-diagonal absolute element a[p][q]
+        p = 0; q = 1;
+        for (i = 0; i < 3; i++) {
+            for (j = 0; j < 3; j++) {
+                if (i == j) continue;
+                if (Abs(a[i][j]) > Abs(a[p][q])) {
+                    p = i;
+                    q = j; }
+                // Compute the Jacobi rotation matrix J(p, q, theta)
+                // (This code can be optimized for the three different cases of rotation) SymSchur2(a, p, q, c, s);
+                for (i = 0; i < 3; i++) {
+                    J[i][0] = J[i][1] = J[i][2] = 0.0f;
+                    J[i][i] = 1.0f;
+                }
+                J[p][p] =  c; J[p][q] = s;
+                J[q][p] = -s; J[q][q] = c;
+                // Cumulate rotations into what will contain the eigenvectors
+                v = v * J;
+                // Make ’a’ more diagonal, until just eigenvalues remain on diagonal
+                a = (J.Transpose() * a) * J;
+                // Compute "norm" of off-diagonal elements
+                float off = 0.0f;
 }
 
