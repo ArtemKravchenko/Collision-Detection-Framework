@@ -47,6 +47,13 @@ private:
     //
     // See Golub, Van Loan, Matrix Computations, 3rd ed, p428
     void SymSchur2(RBMFMatrix &a, int p, int q, double &c, double &s) ;
+    // Computes the eigenvectors and eigenvalues of the symmetric matrix A using // the classic Jacobi method of iteratively updating A as A = J∧T * A * J, // where J = J(p, q, theta) is the Jacobi rotation matrix.
+    //
+    // On exit, v will contain the eigenvectors, and the diagonal elements
+    // of a are the corresponding eigenvalues.
+    //
+    // See Golub, Van Loan, Matrix Computations, 3rd ed, p428
+    void Jacobi(RBMFMatrix &a, RBMFMatrix &v);
 public:
     // Determinant Predicates
     RBGFOrientated2DType orientated2D(RBGFPoint *p1, RBGFPoint *p2, RBGFPoint *p3);
