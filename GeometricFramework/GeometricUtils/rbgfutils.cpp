@@ -175,7 +175,6 @@ void RBGFUtils::barycentricWith2DProjection(RBGFPoint* const a, RBGFPoint* const
     delete v0;
     delete v1;
 }
-
 int RBGFUtils::pointInTriangle(RBGFPoint* const a, RBGFPoint* const b, RBGFPoint* const c, RBGFPoint* const p)
 {
     float u, v, w;
@@ -219,7 +218,7 @@ void RBGFUtils::extremePointsAlongDirection(RBGFVector* const dir, RBGFPoint* co
     }
 }
 // TEST SPHERE
-int RBGFUtils::TestSphereSphere(RBGFSphere * const a, RBGFSphere * const b)
+int RBGFUtils::testSphereSphere(RBGFSphere * const a, RBGFSphere * const b)
 {
     // Calculate squared distance between centers
     const RBGFPoint *aCtr = a->getCenter();
@@ -243,7 +242,7 @@ int RBGFUtils::TestSphereSphere(RBGFSphere * const a, RBGFSphere * const b)
     delete d;
     return dist2 <= radiusSum * radiusSum;
 }
-void RBGFUtils::MostSeparatedPointsOnAABB(int &min, int &max, RBGFPoint * const pt[], int numPts)
+void RBGFUtils::mostSeparatedPointsOnAABB(int &min, int &max, RBGFPoint * const pt[], int numPts)
 {
     int dim = (pt[0])->getDimention();
     // First find most extreme points along principal axes
@@ -266,7 +265,7 @@ void RBGFUtils::MostSeparatedPointsOnAABB(int &min, int &max, RBGFPoint * const 
         }
     }
 }
-void RBGFUtils::SphereFromDistantPoints(RBGFSphere &s, RBGFPoint * const pt[], int numPts)
+void RBGFUtils::sphereFromDistantPoints(RBGFSphere &s, RBGFPoint * const pt[], int numPts)
 {
     // Find the most separated point pair defining the encompassing AABB
     int min, max;
@@ -284,7 +283,7 @@ void RBGFUtils::SphereFromDistantPoints(RBGFSphere &s, RBGFPoint * const pt[], i
     delete v1;
 }
 // Given Sphere s and Point p, update s (if needed) to just encompass p
-void RBGFUtils::SphereOfSphereAndPt(RBGFSphere& s, RBGFPoint const *p)
+void RBGFUtils::sphereOfSphereAndPt(RBGFSphere& s, RBGFPoint const *p)
 {
     // Compute squared distance between point and sphere center
     const RBGFPoint *startPoint = s.getCenter();
@@ -304,9 +303,10 @@ void RBGFUtils::SphereOfSphereAndPt(RBGFSphere& s, RBGFPoint const *p)
         s.setCenter(&newCenter);
         delete &newCenter;
     }
+    delete d;
 }
 // The full code for computing the approximate bounding sphere becomes
-void RBGFUtils::RitterSphere(RBGFSphere &s, RBGFPoint * const pt[], int numPts)
+void RBGFUtils::ritterSphere(RBGFSphere &s, RBGFPoint * const pt[], int numPts)
 {
     // Get sphere encompassing two approximately most distant points
     SphereFromDistantPoints(s, pt, numPts);
@@ -328,7 +328,7 @@ double RBGFUtils::variance(double x[], int n)
     for (int i = 0; i < n; i++) s2 += (x[i] - u) * (x[i] - u);
     return s2 / n;
 }
-void CovarianceMatrix(RBMFMatrix &cov, RBGFPoint * const pt[], int numPts)
+void RBGFUtils::covarianceMatrix(RBMFMatrix &cov, RBGFPoint * const pt[], int numPts)
 {
     double oon = 1.0f / (double)numPts;
     RBGFPoint *c = new RBGFPoint(0, 0, 0);
@@ -365,8 +365,9 @@ void CovarianceMatrix(RBMFMatrix &cov, RBGFPoint * const pt[], int numPts)
     cov.setElementAtInxex(e02 * oon, 6);
     cov.setElementAtInxex(e12 * oon, 5);
     cov.setElementAtInxex(e12 * oon, 7);
+    delete c;
 }
-void SymSchur2(RBMFMatrix &a, int p, int q, double &c, double &s)
+void RBGFUtils::symSchur2(RBMFMatrix &a, int p, int q, double &c, double &s)
 {
     const double *els = a.getElements();
     double num = els[p*3 + q];
@@ -386,6 +387,7 @@ void SymSchur2(RBMFMatrix &a, int p, int q, double &c, double &s)
         c = 1.0; s = 0.0;
     }
 }
+<<<<<<< HEAD
 void Jacobi(RBMFMatrix &a, RBMFMatrix &v)
 {
     int i, j, n, p, q;
@@ -423,3 +425,130 @@ void Jacobi(RBMFMatrix &a, RBMFMatrix &v)
                 float off = 0.0f;
 }
 
+=======
+void RBGFUtils::eigenSphere(RBGFSphere &eigSphere, RBGFPoint * const pt[], int numPts)
+{
+    double *els = new double {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    RBMFMatrix *m = new RBMFMatrix(3, 3, els), *v = new RBMFMatrix(3, 3, els);
+    // Compute the covariance matrix m
+    covarianceMatrix(*m, pt, numPts);
+    // Decompose it into eigenvectors (in v) and eigenvalues (in m)
+    jacobi(*m, *v);
+    // Find the component with largest magnitude eigenvalue (largest spread)
+    const RBGFPoint *tmp = new RBGFPoint(0,0,0);
+    RBGFVector *e = new RBGFVector(tmp);
+    int maxc = 0;
+    float maxf, maxe = abs(m[0][0]);
+    if ((maxf = abs(m[1][1])) > maxe) maxc = 1, maxe = maxf;
+    if ((maxf = Abs(m[2][2])) > maxe) maxc = 2, maxe = maxf;
+    e[0] = v[0][maxc]; e[1] = v[1][maxc]; e[2] = v[2][maxc];
+    // Find the most extreme points along direction ’e’
+    int imin, imax;
+    extremePointsAlongDirection(e, pt, numPts, &imin, &imax);
+    RBGFPoint * const minpt = pt[imin];
+    RBGFPoint * const maxpt = pt[imax];
+    RBGFPoint * dotPoint = maxpt - minpt;
+    RBGFVector *dotVector = new RBGFVector(dotPoint);
+    double dist = sqrt(dotVector->dotProduct(dotVector));
+    eigSphere.setRadius(dist * 0.5);
+    eigSphere.setCenter((minpt + maxpt)->productByNumber(0.5));
+    delete m;
+    delete tmp;
+    delete e;
+    delete dotVector;
+}
+void RBGFUtils::ritterEigenSphere(RBGFSphere &s, RBGFPoint * const pt[], int numPts)
+{
+    // Start with sphere from maximum spread
+    eigenSphere(s, pt, numPts);
+    // Grow sphere to include all points
+    for (int i = 0; i < numPts; i++)
+        sphereOfSphereAndPt(s, pt[i]);
+}
+void RBGFUtils::ritterIterative(RBGFSphere &s, RBGFPoint const * pt[], int numPts)
+{
+    const int NUM_ITER = 8;
+    ritterSphere(s, pt, numPts);
+    RBGFSphere s2 = s; for (int k = 0; k < NUM_ITER; k++) {
+        // Shrink sphere somewhat to make it an underestimate (not bound)
+        s2.setRadius = s2.getRadius() * 0.95;
+        // Make sphere bound data again
+        for (int i = 0; i < numPts; i++) {
+            // Swap pt[i] with pt[j], where j randomly from interval [i+1,numPts-1]
+            doRandomSwap();
+            sphereOfSphereAndPt(s2, pt[i]);
+        }
+        // Update s whenever a tighter sphere is found
+        if (s2.getRadius() < s.getRadius())
+            s = s2;
+    }
+}
+RBGFSphere RBGFUtils::welzlSphere(RBGFPoint const * pt[], unsigned int numPts, RBGFPoint const * sos[], unsigned int numSos)
+{
+    // if no input points, the recursion has bottomed out. Now compute an
+    // exact sphere based on points in set of support (zero through four points)
+    if (numPts == 0)
+    {
+        switch (numSos)
+        {
+            case 0:
+                return RBGFSphere();
+            case 1:
+                return RBGFSphere(sos[0]);
+            case 2:
+                return RBGFSphere(sos[0], sos[1]);
+            case 3:
+                return RBGFSphere(sos[0], sos[1], sos[2]);
+            case 4:
+                return RBGFSphere(sos[0], sos[1], sos[2], sos[3]);
+        }
+    }
+    // Pick a point at "random" (here just the last point of the input set)
+    int index = numPts - 1;
+    // Recursively compute the smallest bounding sphere of the remaining points
+    RBGFSphere smallestSphere = welzlSphere(pt, numPts - 1, sos, numSos);
+    // (*) // If the selected point lies inside this sphere, it is indeed the smallest
+    if(pointInsideSphere(pt[index], smallestSphere))
+        return smallestSphere;
+    // Otherwise, update set of support to additionally contain the new point
+    sos[numSos] = pt[index];
+    // Recursively compute the smallest sphere of remaining points with new s.o.s.
+    return welzlSphere(pt, numPts - 1, sos, numSos + 1);
+}
+int RBGFUtils::testOBBOBB(RBGFOrientatedBoundingBox &a, RBGFOrientatedBoundingBox &b)
+{
+    double ra, rb;
+    , AbsR;
+    double *els = new double[9];
+    RBGFVector *au[] = a.getLocalAxis();
+    RBGFVector *bu[] = b.getLocalAxis();
+    // Compute rotation matrix expressing b in a’s coordinate frame
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            els[i*3 + j] = au[i]->dotProduct(bu[j]);
+    RBMFMatrix *R = new RBMFMatrix(3, 3, els);
+    // Compute translation vector t
+    RBGFVector t = b.c-a.c;
+    // Bring translation into a’s coordinate frame
+    t = Vector(Dot(t, a.u[0]), Dot(t, a.u[2]), Dot(t, a.u[2]));
+    // Compute common subexpressions. Add in an epsilon term to
+    // counteract arithmetic errors when two edges are parallel and
+    // their cross product is (near) null (see text for details)
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            AbsR[i][j] = Abs(R[i][j]) + 0.0001; // EPSILON
+    // Test axes L = A0, L = A1, L = A2 for (int i = 0; i < 3; i++) { ra = a.e[i]; rb = b.e[0] * AbsR[i][0] + b.e[1] * AbsR[i][1] + b.e[2] * AbsR[i][2]; if (Abs(t[i]) > ra + rb) return 0; }
+    // Test axes L = B0, L = B1, L = B2 for (int i = 0; i < 3; i++) { ra = a.e[0] * AbsR[0][i] + a.e[1] * AbsR[1][i] + a.e[2] * AbsR[2][i]; rb = b.e[i]; if (Abs(t[0] * R[0][i] + t[1] * R[1][i] + t[2] * R[2][i]) > ra + rb) return 0; }
+    // Test axis L = A0 x B0 ra = a.e[1] * AbsR[2][0] + a.e[2] * AbsR[1][0]; rb = b.e[1] * AbsR[0][2] + b.e[2] * AbsR[0][1]; if (Abs(t[2] * R[1][0] - t[1] * R[2][0]) > ra + rb) return 0;
+    // Test axis L = A0 x B1 ra = a.e[1] * AbsR[2][1] + a.e[2] * AbsR[1][1]; rb = b.e[0] * AbsR[0][2] + b.e[2] * AbsR[0][0]; if (Abs(t[2] * R[1][1] - t[1] * R[2][1]) > ra + rb) return 0;
+    // Test axis L = A0 x B2 ra = a.e[1] * AbsR[2][2] + a.e[2] * AbsR[1][2]; rb = b.e[0] * AbsR[0][1] + b.e[1] * AbsR[0][0]; if (Abs(t[2] * R[1][2] - t[1] * R[2][2]) > ra + rb) return 0;
+    // Test axis L = A1 x B0 ra = a.e[0] * AbsR[2][0] + a.e[2] * AbsR[0][0]; rb = b.e[1] * AbsR[1][2] + b.e[2] * AbsR[1][1];
+    if (Abs(t[0] * R[2][0] - t[2] * R[0][0]) > ra + rb) return 0;
+    // Test axis L = A1 x B1 ra = a.e[0] * AbsR[2][1] + a.e[2] * AbsR[0][1]; rb = b.e[0] * AbsR[1][2] + b.e[2] * AbsR[1][0]; if (Abs(t[0] * R[2][1] - t[2] * R[0][1]) > ra + rb) return 0;
+    // Test axis L = A1 x B2 ra = a.e[0] * AbsR[2][2] + a.e[2] * AbsR[0][2]; rb = b.e[0] * AbsR[1][1] + b.e[1] * AbsR[1][0]; if (Abs(t[0] * R[2][2] - t[2] * R[0][2]) > ra + rb) return 0;
+    // Test axis L = A2 x B0 ra = a.e[0] * AbsR[1][0] + a.e[1] * AbsR[0][0]; rb = b.e[1] * AbsR[2][2] + b.e[2] * AbsR[2][1]; if (Abs(t[1] * R[0][0] - t[0] * R[1][0]) > ra + rb) return 0;
+    // Test axis L = A2 x B1 ra = a.e[0] * AbsR[1][1] + a.e[1] * AbsR[0][1]; rb = b.e[0] * AbsR[2][2] + b.e[2] * AbsR[2][0]; if (Abs(t[1] * R[0][1] - t[0] * R[1][1]) > ra + rb) return 0;
+    // Test axis L = A2 x B2 ra = a.e[0] * AbsR[1][2] + a.e[1] * AbsR[0][2]; rb = b.e[0] * AbsR[2][1] + b.e[1] * AbsR[2][0]; if (Abs(t[1] * R[0][2] - t[0] * R[1][2]) > ra + rb) return 0;
+    // Since no separating axis is found, the OBBs must be intersecting return 1;
+}
+>>>>>>> d4e8b33ac1709810b8d078ede517242d45a7386f
